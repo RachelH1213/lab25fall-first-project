@@ -1,0 +1,171 @@
+/* ========== Base ========== */
+* { box-sizing: border-box; }
+:root {
+  --bg: #111;
+  --ink: #eee;
+  --panel: #1b1b1b;
+  --line: #444;
+  --accent: #ffccff;
+  --accent-2: #ff7ad9;
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: "Courier New", monospace;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+nav { text-align: center; padding: 1rem; background: #222; }
+nav a { color: var(--accent); text-decoration: none; margin: 0 10px; }
+nav a:hover { text-decoration: underline; }
+.page-header { text-align: center; padding: .5rem 1rem 1rem; }
+.subtitle { color: #bfbfbf; margin-top: .25rem; }
+
+/* 防止“看起来白底”的情况 */
+img { width: 100%; display: block; border-radius: 10px; background: transparent; }
+figure { margin: 0; background: transparent; }
+figcaption { font-size: .8rem; color: #cfc; margin-top: .35rem; }
+.sr-only { position: absolute; left: -9999px; }
+
+/* 可读的卡片 */
+.note, .label-card, .fact-card {
+  background: var(--panel);
+  border: 1px dashed var(--line);
+  padding: .75rem;
+  border-radius: 12px;
+}
+
+/* 聚焦可见（a11y） */
+:focus-visible {
+  outline: 3px solid var(--accent-2);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ========== Page 1 — Diary ========== */
+.grid-diary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px; padding: 20px;
+}
+.grid-diary .span-2 { grid-column: span 2; }
+.grid-diary .tall { grid-row: span 2; }
+.rotate { transform: rotate(-2deg); }
+
+/* ========== Page 2 — Interests（杂志墙） ========== */
+.grid-interests {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 160px;
+  gap: 12px; padding: 20px;
+}
+.grid-interests .big { grid-column: span 3; grid-row: span 2; }
+.grid-interests .tall { grid-row: span 2; }
+.grid-interests .wide { grid-column: span 2; }
+
+/* —— 整屏大图（出血铺满） —— */
+.fullwidth-figure {
+  grid-column: 1 / -1;
+  position: relative;
+  background: transparent;
+  isolation: isolate;
+  /* 让 figure 贴到浏览器左右边缘（出血效果） */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+/* 指定 interests 页的大背景图（换图只需改 url） */
+.hero-njz {
+  background-image: url("images/njz/njz4.png");
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;         /* cover 可忽略透明留白并贴边铺满 */
+  min-height: min(100vh, 120vw);  /* 给足高度，海报感 */
+  border-radius: 10px;            /* 如果不要圆角可去掉 */
+}
+
+/* ========== Page 3 — Cat ========== */
+.grid-cat {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 140px;
+  gap: 12px; padding: 20px;
+}
+.grid-cat .hero { grid-column: 3 / 11; grid-row: span 3; }
+.grid-cat .wide { grid-column: 2 / 12; }
+.fact-card { border-color: #5a5; }
+
+/* ========== Collage / Sticker System ========== */
+/* PNG 贴纸（透明背景）、悬停轻缩放 */
+.sticker {
+  position: absolute;
+  width: 140px;       /* 需要更小/更大就改这里或加媒体查询 */
+  height: auto;
+  --r: -3deg;         /* 初始微倾角（JS 会随机化） */
+  transform: rotate(var(--r));
+  filter: drop-shadow(3px 3px 6px rgba(0,0,0,.4));
+  transition: transform .3s ease;
+  will-change: transform;
+}
+.sticker:hover { transform: scale(1.08) rotate(0deg); z-index: 10; }
+
+/* 文字贴纸（胶带纸条感） */
+.sticker-text {
+  position: absolute;
+  background: rgba(255,255,200,.85);
+  border: 1px dashed #333;
+  padding: 6px 10px;
+  font-family: "Courier New", monospace;
+  font-size: .95rem;
+  transform: rotate(2deg);
+  filter: drop-shadow(2px 2px 5px rgba(0,0,0,.3));
+  color: #111;
+}
+
+/* 轻漂浮动画（可配合 JS 随机化节奏） */
+@keyframes floaty {
+  0%   { transform: translateY(0) rotate(var(--r, -3deg)); }
+  50%  { transform: translateY(-10px) rotate(calc(var(--r, -3deg) + .6deg)); }
+  100% { transform: translateY(0) rotate(var(--r, -3deg)); }
+}
+.floaty { animation: floaty 6.5s ease-in-out infinite; }
+
+/* 可选：色相微呼吸 */
+@keyframes huebreath { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(10deg); } }
+.hue { animation: huebreath 12s ease-in-out infinite alternate; }
+
+/* 无障碍：系统“减少动态”时关闭动画 */
+@media (prefers-reduced-motion: reduce) {
+  .floaty, .hue { animation: none !important; }
+}
+
+/* —— 贴纸初始位置（按需调整） —— */
+.sticker1 { top: 15%; left: 8%; }
+.sticker2 { top: 10%; right: 12%; }
+.sticker3 { bottom: 20%; left: 15%; }
+.sticker4 { bottom: 18%; right: 18%; }
+.sticker5 { top: 35%; left: 45%; }
+
+/* 文字贴纸位置 */
+.sticker-text1 { top: 5%; left: 40%; }
+.sticker-text2 { bottom: 8%; right: 35%; }
+
+/* ========== Responsive Tweaks ========== */
+@media (max-width: 900px){
+  .grid-interests { grid-template-columns: repeat(4, 1fr); }
+  .grid-cat { grid-template-columns: repeat(8, 1fr); }
+  .grid-cat .hero { grid-column: 2 / 8; }
+}
+@media (max-width: 600px){
+  .grid-diary { grid-template-columns: 1fr; }
+  .grid-interests { grid-template-columns: repeat(2, 1fr); }
+  .grid-cat { grid-template-columns: repeat(4, 1fr); }
+  .grid-cat .hero { grid-column: 1 / -1; }
+  .sticker { width: 100px; }      /* 小屏贴纸缩小 */
+  .fullwidth-figure {             /* 小屏出血可略收窄 */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moodboard — Interests (NewJeans)</title>
+  <link rel="stylesheet" href="style.css"/>
+
+  <style>
+    /* ===== 背景层 ===== */
+    .canvas {
+      position: relative;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background: #111;
+      z-index: 0;
+    }
+    .canvas::before,
+    .canvas::after{
+      content:"";
+      position: fixed;
+      inset: 0;
+      background-repeat:no-repeat;
+      background-size:cover;
+      background-position:center;
+      z-index:-2;
+      pointer-events:none;
+    }
+    .canvas::before{ background-image:url("images/njz/background.jpeg"); opacity:.3; }
+    .canvas::after { background-image:url("images/njz/background2.jpeg"); opacity:.15; mix-blend-mode:overlay; }
+
+    /* ===== 顶部 hero ===== */
+    .hero {
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      width: 100vw;
+      min-height: min(90vh,120vw);
+      background-image: url("images/njz/newjeans.jpeg");
+      background-size: cover;
+      background-position: center top;
+      display: grid;
+      place-items:end center;
+      border-radius: 10px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .hero .tag {
+      margin: 1rem;
+      padding:.45rem .8rem;
+      font-family:"Courier New", monospace;
+      font-size:.9rem;
+      color:#111;
+      background: rgba(255,255,200,.9);
+      border:1px dashed #333;
+      transform: rotate(-1.5deg);
+      filter: drop-shadow(2px 2px 5px rgba(0,0,0,.35));
+    }
+
+    /* ===== 拼贴区 ===== */
+    .masonry {
+      position: relative;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 140px;
+      gap:14px;
+      padding: 24px 20px 60px;
+      isolation: isolate;
+    }
+    .piece img{ width:100%; display:block; border-radius:12px; }
+    .a { grid-column: 2 / 6;  grid-row: span 5; transform: rotate(-1.8deg); }
+    .b { grid-column: 7 / 12; grid-row: span 4; transform: rotate( 2.2deg); }
+    .c { grid-column: 4 / 9;  grid-row: span 3; transform: rotate(-.8deg);  z-index:2; }
+    .d { grid-column: 9 / 12; grid-row: span 3; transform: rotate( 1.2deg); }
+
+    .note {
+      grid-column: 2 / 5;
+      grid-row: span 2;
+      align-self: start;
+      background: rgba(255,255,200,.88);
+      color:#111;
+      border:1px dashed #333;
+      border-radius:12px;
+      padding:.8rem .9rem;
+      font-family:"Courier New", monospace;
+      transform: rotate(1.4deg);
+      filter: drop-shadow(2px 2px 5px rgba(0,0,0,.28));
+    }
+
+    /* ===== 顶部贴纸舞台（不叠在大图上） + 底部整张IMG ===== */
+    .sticker-stage{
+      position: relative;
+      height: 28vh;                 /* 上方留白高度 */
+      margin: 18px 0 6px;
+      overflow: visible;
+      isolation: isolate;
+      margin-left: calc(50% - 50vw);  /* 出血到两边 */
+      margin-right: calc(50% - 50vw);
+    }
+    .sticker-stage .sticker{ position:absolute; }
+
+    /* 底部整屏大图：使用 <img>，不裁切 */
+    .hero-bottom{
+      margin-top: 32px;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      text-align: center;
+    }
+    .bottom-img{
+      display:block;
+      width: 100vw;      /* 铺满整屏宽度 */
+      height: auto;      /* 保持比例，不裁切 */
+      border-radius: 10px;
+    }
+    .bottom-cap{ font-size:.85rem; color:#cfc; margin-top:.35rem; }
+
+    /* 贴纸基础样式（放大尺寸） */
+    .sticker {
+      position: absolute;
+      width: 200px;                    /* 放大 */
+      height: auto;
+      --r: -3deg;
+      transform: rotate(var(--r));
+      filter: drop-shadow(3px 3px 6px rgba(0,0,0,.4));
+      transition: transform .3s ease;
+      will-change: transform;
+    }
+    .sticker:hover { transform: scale(1.08) rotate(0deg); z-index: 10; }
+
+    @keyframes floaty {
+      0%   { transform: translateY(0) rotate(var(--r,-3deg)); }
+      50%  { transform: translateY(-10px) rotate(calc(var(--r,-3deg) + .6deg)); }
+      100% { transform: translateY(0) rotate(var(--r,-3deg)); }
+    }
+    .floaty { animation: floaty 6.5s ease-in-out infinite; }
+
+    /* 贴纸在舞台里的预设位置（可随时调整） */
+    .sticker1 { top: 8%;  left: 8%; }
+    .sticker2 { top: 4%;  right: 12%; }
+    .sticker3 { bottom: 10%; left: 22%; }
+    .sticker4 { bottom: 12%; right: 20%; }
+    .sticker5 { top: 20%; left: 45%; }
+
+    @media (max-width: 600px){
+      .sticker { width: 140px; }
+    }
+  </style>
+</head>
+
+<body class="page2">
+  <nav aria-label="Primary">
+    <a href="index.html">Home</a> |
+    <a href="interests.html">Interests</a> |
+    <a href="cat.html">My Cat</a>
+  </nav>
+
+  <div class="canvas">
+    <header class="page-header">
+      <h1>Things I’m Into</h1>
+      <p class="subtitle">Taylor Swift · NewJeans · Olivia Rodrigo</p>
+    </header>
+
+    <!-- 顶部 hero -->
+    <section class="hero" aria-label="NewJeans hero">
+      <div class="tag">✦ dreamy ✦</div>
+    </section>
+
+    <!-- 顶部贴纸舞台（在上方空隙处，不叠在大图上） -->
+    <section class="sticker-stage" aria-label="sticker stage">
+      <img src="images/njz/haerin.png"   alt="Haerin sticker"   class="sticker sticker1 floaty">
+      <img src="images/njz/danielle.png" alt="Danielle sticker" class="sticker sticker2 floaty">
+      <img src="images/njz/hanni.png"    alt="Hanni sticker"    class="sticker sticker3 floaty">
+      <img src="images/njz/hyein.png"    alt="Hyein sticker"    class="sticker sticker4 floaty">
+      <img src="images/njz/minji.png"    alt="Minji sticker"    class="sticker sticker5 floaty">
+    </section>
+
+    <!-- 中间拼贴 -->
+    <section class="masonry" aria-label="NewJeans collage">
+      <figure class="piece a"><img src="images/njz/njz3.jpeg" alt="NewJeans candid"></figure>
+      <figure class="piece b"><img src="images/njz/newjeans%20mv.jpeg" alt="NewJeans MV still"></figure>
+      <article class="note">i like how their visuals feel playful + precise.<br>glossy, then grainy. cute, then uncanny.</article>
+      <figure class="piece c"><img src="images/njz/new%20jeans.jpeg" alt="NewJeans studio photo"></figure>
+      <figure class="piece d"><img src="images/njz/_%20(1).jpeg" alt="NewJeans backstage"></figure>
+    </section>
+
+    <!-- 底部整屏大图（不裁切） -->
+    <section class="hero-bottom" aria-label="bottom poster">
+      <img src="images/njz/njz4.png" alt="NewJeans full poster" class="bottom-img">
+      <figcaption class="bottom-cap">evening patrol</figcaption>
+    </section>
+  </div>
+
+  <!-- 随机化贴纸动画 -->
+  <script>
+    document.querySelectorAll('.floaty').forEach((el)=>{
+      const delay = (Math.random()*2).toFixed(2)+'s';
+      const dur   = (5.5 + Math.random()*3).toFixed(2)+'s';
+      el.style.animationDelay = delay;
+      el.style.animationDuration = dur;
+      el.style.setProperty('--r', (Math.random()*6-3).toFixed(2)+'deg');
+    });
+  </script>
+</body>
+</html>

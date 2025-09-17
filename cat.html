@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Cat</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="page3">
+  <nav aria-label="Primary">
+    <a href="index.html">Home</a> |
+    <a href="interests.html">Interests</a> |
+    <a href="cat.html">My Cat</a>
+  </nav>
+
+  <header class="page-header">
+    <h1>My Cat</h1>
+    <p class="subtitle">chief chaos officer · 4am zoomies expert</p>
+  </header>
+
+  <main class="cat-canvas" id="main">
+    <!-- 贴纸舞台：环绕主图的猫咪碎片 -->
+    <section class="cat-sticker-stage">
+      <img src="images/my_cat/IMG_3415.PNG" alt="sticker cat 3415" class="cat-sticker s1 floaty">
+      <img src="images/my_cat/IMG_3417.PNG" alt="sticker cat 3417" class="cat-sticker s2 floaty">
+      <img src="images/my_cat/IMG_3418.PNG" alt="sticker cat 3418" class="cat-sticker s3 floaty">
+      <img src="images/my_cat/IMG_3419.PNG" alt="sticker cat 3419" class="cat-sticker s4 floaty">
+      <img src="images/my_cat/IMG_3420.PNG" alt="sticker cat 3420" class="cat-sticker s5 floaty">
+      <img src="images/my_cat/IMG_3421.PNG" alt="sticker cat 3421" class="cat-sticker s6 floaty">
+      <img src="images/my_cat/IMG_3422.PNG" alt="sticker cat 3422" class="cat-sticker s7 floaty">
+      <img src="images/my_cat/IMG_3423.PNG" alt="sticker cat 3423" class="cat-sticker s8 floaty">
+      <img src="images/my_cat/IMG_3424.PNG" alt="sticker cat 3424" class="cat-sticker s9 floaty">
+      <img src="images/my_cat/IMG_3425.PNG" alt="sticker cat 3425" class="cat-sticker s10 floaty">
+      <img src="images/my_cat/IMG_3426.PNG" alt="sticker cat 3426" class="cat-sticker s11 floaty">
+      <img src="images/my_cat/IMG_3427.PNG" alt="sticker cat 3427" class="cat-sticker s12 floaty">
+      <img src="images/my_cat/IMG_3428.PNG" alt="sticker cat 3428" class="cat-sticker s13 floaty">
+      <img src="images/my_cat/IMG_3429.PNG" alt="sticker cat 3429" class="cat-sticker s14 floaty">
+    </section>
+
+    <!-- 底部整屏大图 -->
+    <section class="cat-hero-bottom">
+      <img src="images/my_cat/IMG_3416.PNG" alt="My cat centerpiece" class="cat-main-img-bottom">
+      <figcaption class="hero-cap">queen of the house</figcaption>
+    </section>
+  </main>
+</body>
+  <style>
+    .cat-canvas{ position:relative; min-height:100dvh; background:#111; padding-top:120px; }
+    /* .cat-hero{ position:relative; text-align:center; }
+    .cat-main-img{ width:60vw; max-width:800px; height:auto; display:block; margin:0 auto; z-index:1; } */
+    .hero-cap{ font-size:.9rem; color:#cfc; margin-top:.35rem; }
+
+    .cat-sticker-stage{ position:relative; margin-top:60px; }
+    .cat-sticker{ position:absolute; width:160px; height:auto; filter:drop-shadow(3px 3px 6px rgba(0,0,0,.4)); transition:transform .3s ease; }
+    .cat-sticker:hover{ transform:scale(1.08); z-index:10; }
+    @keyframes floaty{ 0%{ transform:translateY(0);} 50%{ transform:translateY(-12px);} 100%{ transform:translateY(0);} }
+    .floaty{ animation:floaty 6s ease-in-out infinite; }
+
+    /* 预设贴纸位置环绕主图 */
+    .s1{ top:10%; left:15%; }
+    .s2{ top:5%; right:18%; }
+    .s3{ bottom:20%; left:10%; }
+    .s4{ bottom:18%; right:12%; }
+    .s5{ top:30%; left:5%; }
+    .s6{ top:35%; right:6%; }
+    .s7{ bottom:30%; left:25%; }
+    .s8{ bottom:25%; right:25%; }
+    .s9{ top:20%; left:40%; }
+    .s10{ top:18%; right:40%; }
+    .s11{ bottom:10%; left:35%; }
+    .s12{ bottom:12%; right:35%; }
+    .s13{ top:50%; left:15%; }
+    .s14{ top:55%; right:15%; }
+
+    .cat-hero-bottom{ margin-top:100px; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); text-align:center; }
+    .cat-main-img-bottom{ display:block; width:100vw; height:auto; border-radius:10px; }
+
+    @media(max-width:900px){ .cat-main-img-bottom{ width:100vw;} .cat-sticker{ width:120px;} }
+    @media(max-width:600px){ .cat-main-img-bottom{ width:100vw;} .cat-sticker{ width:90px;} }
+  </style>
+</html>
