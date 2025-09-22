@@ -19,58 +19,206 @@
   </header>
 
   <main class="cat-canvas" id="main">
-    <!-- 贴纸舞台：环绕主图的猫咪碎片 -->
-    <section class="cat-sticker-stage">
-      <img src="images/my_cat/IMG_3415.PNG" alt="sticker cat 3415" class="cat-sticker s1 floaty">
-      <img src="images/my_cat/IMG_3417.PNG" alt="sticker cat 3417" class="cat-sticker s2 floaty">
-      <img src="images/my_cat/IMG_3418.PNG" alt="sticker cat 3418" class="cat-sticker s3 floaty">
-      <img src="images/my_cat/IMG_3419.PNG" alt="sticker cat 3419" class="cat-sticker s4 floaty">
-      <img src="images/my_cat/IMG_3420.PNG" alt="sticker cat 3420" class="cat-sticker s5 floaty">
-      <img src="images/my_cat/IMG_3421.PNG" alt="sticker cat 3421" class="cat-sticker s6 floaty">
-      <img src="images/my_cat/IMG_3422.PNG" alt="sticker cat 3422" class="cat-sticker s7 floaty">
-      <img src="images/my_cat/IMG_3423.PNG" alt="sticker cat 3423" class="cat-sticker s8 floaty">
-      <img src="images/my_cat/IMG_3424.PNG" alt="sticker cat 3424" class="cat-sticker s9 floaty">
-      <img src="images/my_cat/IMG_3425.PNG" alt="sticker cat 3425" class="cat-sticker s10 floaty">
-      <img src="images/my_cat/IMG_3426.PNG" alt="sticker cat 3426" class="cat-sticker s11 floaty">
-      <img src="images/my_cat/IMG_3427.PNG" alt="sticker cat 3427" class="cat-sticker s12 floaty">
-      <img src="images/my_cat/IMG_3428.PNG" alt="sticker cat 3428" class="cat-sticker s13 floaty">
-      <img src="images/my_cat/IMG_3429.PNG" alt="sticker cat 3429" class="cat-sticker s14 floaty">
+    <!-- Real cat purr audio (looping). MP3 first for Safari/iOS, then OGG fallbacks -->
+    <audio id="purrAudio" preload="auto" loop>
+      <source src="audio/cat_purr.mp3" type="audio/mpeg">
+      <source src="https://upload.wikimedia.org/wikipedia/commons/6/64/Purring_cat_bertie.ogg" type="audio/ogg">
+      <source src="https://upload.wikimedia.org/wikipedia/commons/8/89/Cat_purring.oga" type="audio/ogg">
+      Your browser does not support the audio element.
+    </audio>
+    <!-- === Interaction Panel === -->
+    <section class="ux-panel" aria-label="interactions">
+      <div class="ux-row">
+        <button id="spinBtn" class="ux-btn" aria-label="Spin the sticker ring">Spin Ring</button>
+        <button id="shuffleBtn" class="ux-btn" aria-label="Shuffle sticker positions">Shuffle</button>
+        <button id="pulseBtn" class="ux-btn" aria-label="Pulse radius">Pulse</button>
+        <button id="dragRingBtn" class="ux-btn" aria-label="Drag to rotate is on" aria-pressed="true">Drag Rotate: ON</button>
+      </div>
+      <div class="ux-row">
+        <label for="radiusRange">Radius</label>
+        <input id="radiusRange" type="range" min="360" max="640" step="2" value="520" aria-valuemin="360" aria-valuemax="640" aria-valuenow="520"/>
+        <label for="textOrbit" class="ux-inline"><input id="textOrbit" type="checkbox"/> Orbit Text</label>
+        <button id="soundBtn" class="ux-btn" aria-label="Toggle purr sound" aria-pressed="false">Purr</button>
+      </div>
+      <p class="ux-hint">Tip: use ← → arrows to rotate, ↑ ↓ to change radius. Drag on the circle to rotate it.</p>
+    </section>
+    <p id="audioWarn" class="ux-hint" hidden>
+      (Tap the <strong>Purr</strong> button once to enable sound. If you still can't hear it, add an MP3 file at <code>audio/cat_purr.mp3</code>.)
+    </p>
+    <!-- 环形舞台：中间超大主图 + 圆弧文字 + 周围小贴纸 -->
+    <section class="cat-ring" aria-label="big cat ring stage">
+      <!-- 中间超大主图 -->
+      <img src="images/my_cat/IMG_3420.PNG" alt="My cat centerpiece" class="cat-main-center">
+
+      <!-- 圆弧文字（SVG） -->
+      <svg class="arc-text" viewBox="0 0 1000 1000" aria-hidden="true">
+        <defs>
+          <!-- Upper semicircle: left->right along the TOP arc -->
+          <path id="ringPath" d="M 110,500 a 390,390 0 0 1 780,0" />
+        </defs>
+        <text class="arc-text-content" text-anchor="middle">
+          <textPath href="#ringPath" startOffset="50%">
+            this is my cat ✶ biscuit paws ✶ purr engine ✶ sunbeam seeker ✶ window watcher ✶ nap champion ✶ queen of the house ✶
+          </textPath>
+        </text>
+      </svg>
+
+      <!-- evenly spaced stickers are positioned by CSS angles ( --a ) -->
+      <!-- 环绕的小猫贴纸 -->
+      <img src="images/my_cat/IMG_3415.PNG" alt="sticker cat 3415" class="cat-sticker s1 floaty a1">
+      <img src="images/my_cat/IMG_3428.PNG" alt="sticker cat 3417" class="cat-sticker s2 floaty a2">
+      <img src="images/my_cat/IMG_3418.PNG" alt="sticker cat 3418" class="cat-sticker s3 floaty a3">
+      <img src="images/my_cat/IMG_3419.PNG" alt="sticker cat 3419" class="cat-sticker s4 floaty a4">
+      <img src="images/my_cat/IMG_3420.PNG" alt="sticker cat 3420" class="cat-sticker s5 floaty a5">
+      <img src="images/my_cat/IMG_3421.PNG" alt="sticker cat 3421" class="cat-sticker s6 floaty a6">
+      <img src="images/my_cat/IMG_3422.PNG" alt="sticker cat 3422" class="cat-sticker s7 floaty a7">
+      <img src="images/my_cat/IMG_3423.PNG" alt="sticker cat 3423" class="cat-sticker s8 floaty a8">
+      <img src="images/my_cat/IMG_3424.PNG" alt="sticker cat 3424" class="cat-sticker s9 floaty a9">
+      <!-- <img src="images/my_cat/IMG_3425.PNG" alt="sticker cat 3425" class="cat-sticker s10 floaty"> -->
+      <img src="images/my_cat/IMG_3426.PNG" alt="sticker cat 3426" class="cat-sticker s11 floaty a10">
+      <img src="images/my_cat/IMG_3429.PNG" alt="sticker cat 3427" class="cat-sticker s12 floaty a11">
+      <!-- <img src="images/my_cat/IMG_3428.PNG" alt="sticker cat 3428" class="cat-sticker s13 floaty"> -->
+      <!-- <img src="images/my_cat/IMG_3429.PNG" alt="sticker cat 3429" class="cat-sticker s14 floaty"> -->
     </section>
 
     <!-- 底部整屏大图 -->
     <section class="cat-hero-bottom">
-      <img src="images/my_cat/IMG_3416.PNG" alt="My cat centerpiece" class="cat-main-img-bottom">
+      <img src="images/my_cat/IMG_3428.PNG" alt="My cat centerpiece" class="cat-main-img-bottom">
+      <!-- HELLO 竖排大字 -->
+      <div class="hello-stack" aria-label="HELLO decoration">
+        <span>H</span>
+        <span>E</span>
+        <span>L</span>
+        <span>L</span>
+        <span>O</span>
+      </div>
       <figcaption class="hero-cap">queen of the house</figcaption>
     </section>
   </main>
 </body>
   <style>
-    .cat-canvas{ position:relative; min-height:100dvh; background:#111; padding-top:120px; }
+    body.page3{
+      background: url("images/njz/background.jpeg") no-repeat center center fixed;
+      background-size: cover;
+    }
+    .cat-canvas{ position:relative; min-height:100dvh; background: rgba(0,0,0,.55); padding-top:120px; }
+
+  /* === HELLO vertical stack on bottom poster === */
+  .cat-hero-bottom{ position: relative; } /* allow absolutely positioned children */
+
+  .hello-stack{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    pointer-events:none;
+    filter: drop-shadow(0 2px 12px rgba(0,0,0,.5));
+    z-index: 5; /* ensure above the image */
+  }
+
+  .hello-stack span{
+    --brat: #CCFF00;
+    color: var(--brat);
+    font-family: Impact, Haettenschweiler, 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 900;
+    line-height: .9;
+    letter-spacing: -0.02em;
+    font-size: clamp(160px, 28vw, 480px);
+    text-shadow: 0 0 6px rgba(0,0,0,.35), 0 4px 18px rgba(0,0,0,.5);
+    transform: skewY(-2deg);
+  }
+
+  @media (hover:hover){
+    .hello-stack span{ transition: transform .25s ease; }
+    .hello-stack:hover span:nth-child(odd){ transform: translateY(-4px) skewY(-2deg); }
+    .hello-stack:hover span:nth-child(even){ transform: translateY(3px) skewY(-2deg); }
+  }
+
+  @media (max-width: 800px){
+    .hello-stack{ right: 4vw; bottom: 6vh; }
+  }
+
+  @media (max-width: 520px){
+    .hello-stack{ right: 3vw; bottom: 4vh; }
+    .hello-stack span{ font-size: clamp(60px, 18vw, 160px); }
+  }
+
+  /* ===== 环形舞台（中心大猫 + 圆弧文字 + 贴纸） ===== */
+  .cat-ring{ 
+    position:relative; margin:0 auto; 
+    width:min(1100px, 96vw); height:min(1100px, 96vw);
+    /* shared center + tiny offsets so stickers & arc move together */
+    --cx: 50%;   /* exact horizontal center */
+    --cy: 50%;   /* exact vertical center */
+    --dx: 0px;   /* no arc x-shift */
+    --dy: 0px;   /* no arc y-shift */
+  }
+  .cat-main-center{ position:absolute; z-index:2; width:52%; height:auto; left:50%; top:50%; transform:translate(-50%, -50%); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
+  .arc-text{ position:absolute; inset:0; z-index:3; pointer-events:none; transform: translate(var(--dx), var(--dy)); }
+  .arc-text-content{ font-family:"Courier New", monospace; font-size:22px; letter-spacing:.06em; fill:#eaeaea; text-anchor:middle; }
+
     /* .cat-hero{ position:relative; text-align:center; }
     .cat-main-img{ width:60vw; max-width:800px; height:auto; display:block; margin:0 auto; z-index:1; } */
     .hero-cap{ font-size:.9rem; color:#cfc; margin-top:.35rem; }
 
-    .cat-sticker-stage{ position:relative; margin-top:60px; }
-    .cat-sticker{ position:absolute; width:160px; height:auto; filter:drop-shadow(3px 3px 6px rgba(0,0,0,.4)); transition:transform .3s ease; }
+    .cat-sticker{ position:absolute; z-index:4; width:160px; height:auto; filter:drop-shadow(3px 3px 6px rgba(0,0,0,.4)); transition:transform .3s ease; }
     .cat-sticker:hover{ transform:scale(1.08); z-index:10; }
-    @keyframes floaty{ 0%{ transform:translateY(0);} 50%{ transform:translateY(-12px);} 100%{ transform:translateY(0);} }
+    @keyframes floaty{
+      0%{
+        transform: rotate(var(--a)) translate(var(--r)) rotate(calc(-1 * var(--a))) translateY(0);
+      }
+      50%{
+        transform: rotate(var(--a)) translate(var(--r)) rotate(calc(-1 * var(--a))) translateY(-12px);
+      }
+      100%{
+        transform: rotate(var(--a)) translate(var(--r)) rotate(calc(-1 * var(--a))) translateY(0);
+      }
+    }
     .floaty{ animation:floaty 6s ease-in-out infinite; }
 
-    /* 预设贴纸位置环绕主图 */
-    .s1{ top:10%; left:15%; }
-    .s2{ top:5%; right:18%; }
-    .s3{ bottom:20%; left:10%; }
-    .s4{ bottom:18%; right:12%; }
-    .s5{ top:30%; left:5%; }
-    .s6{ top:35%; right:6%; }
-    .s7{ bottom:30%; left:25%; }
-    .s8{ bottom:25%; right:25%; }
-    .s9{ top:20%; left:40%; }
-    .s10{ top:18%; right:40%; }
-    .s11{ bottom:10%; left:35%; }
-    .s12{ bottom:12%; right:35%; }
-    .s13{ top:50%; left:15%; }
-    .s14{ top:55%; right:15%; }
+  /* Place all stickers from the center using polar coords */
+  .cat-sticker{ top: var(--cy); left: var(--cx); transform-origin: center center; }
+  .cat-sticker{ --r: clamp(470px, 49vw, 620px); }
+  .cat-sticker{ transform: rotate(var(--a)) translate(var(--r)) rotate(calc(-1 * var(--a))); }
+
+  /* 11 evenly spaced angles (full circle). Adjust start angle to avoid text on top (start at -90deg so top center is empty for arc text) */
+  .a1  { --a:  -90deg; }
+  .a2  { --a:  -57.273deg; }
+  .a3  { --a:  -24.545deg; }
+  .a4  { --a:    8.182deg; }
+  .a5  { --a:   40.909deg; }
+  .a6  { --a:   73.636deg; }
+  .a7  { --a:  106.364deg; }
+  .a8  { --a:  139.091deg; }
+  .a9  { --a:  171.818deg; }
+  .a10 { --a:  204.545deg; }
+  .a11 { --a:  237.273deg; }
+
+  /* === Interaction Panel === */
+  .ux-panel{ position:sticky; top:8px; z-index:20; margin:0 auto 10px; width:min(1000px, 96vw); padding:8px 10px; backdrop-filter: blur(6px); background: rgba(20,20,20,.55); border:1px dashed #444; border-radius:12px; color:#eee; }
+  .ux-row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:6px; }
+  .ux-btn{ background:#1b1b1b; color:#eee; border:1px solid #444; border-radius:8px; padding:.45rem .7rem; cursor:pointer; }
+  .ux-btn[aria-pressed="true"]{ outline:2px solid #ff7ad9; }
+  .ux-inline{ margin-left:12px; }
+  .ux-hint{ margin:.2rem 0 0; font-size:.8rem; color:#bfbfbf; }
+
+
+  /* Drag cursor hint when drag-to-rotate is on */
+  .cat-ring.drag-rotate{ cursor: grab; }
+  .cat-ring.drag-rotate:active{ cursor: grabbing; }
+
+  /* Pulse animation (JS toggles custom property) */
+  @keyframes pulseR{ 0%{ } 50%{ } 100%{ } }
+
+  @media (max-width: 900px){ .arc-text-content{ font-size:18px; } }
+  @media (max-width: 600px){ .arc-text-content{ font-size:16px; } }
+
+  @media (max-width: 900px){ .cat-sticker{ --r: 40vw; } }
+  @media (max-width: 600px){ .cat-sticker{ --r: 36vw; } .cat-main-center{ width:60%; } }
 
     .cat-hero-bottom{ margin-top:100px; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); text-align:center; }
     .cat-main-img-bottom{ display:block; width:100vw; height:auto; border-radius:10px; }
@@ -78,4 +226,189 @@
     @media(max-width:900px){ .cat-main-img-bottom{ width:100vw;} .cat-sticker{ width:120px;} }
     @media(max-width:600px){ .cat-main-img-bottom{ width:100vw;} .cat-sticker{ width:90px;} }
   </style>
+<script>
+(function(){
+  const ring = document.querySelector('.cat-ring');
+  const stickers = Array.from(document.querySelectorAll('.cat-sticker'));
+  const textPath = document.querySelector('.arc-text textPath');
+  const spinBtn = document.getElementById('spinBtn');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  const pulseBtn = document.getElementById('pulseBtn');
+  const dragRingBtn = document.getElementById('dragRingBtn');
+  const radiusRange = document.getElementById('radiusRange');
+  const textOrbit = document.getElementById('textOrbit');
+  const soundBtn = document.getElementById('soundBtn');
+  const purrAudio = document.getElementById('purrAudio');
+  const audioWarn = document.getElementById('audioWarn');
+  // const audioDebug = document.getElementById('audioDebug');
+  // const audioStatus = document.getElementById('audioStatus');
+  let audioUnlocked = false;
+
+  // ----- Base rotation & radius -----
+  let baseDeg = 0; // degrees added to each --a
+  function applyAngles(){
+    stickers.forEach((el, idx)=>{
+      const aClass = Array.from(el.classList).find(c=>/^a\d+$/.test(c));
+      let deg = 0;
+      if(aClass){
+        const map = {
+          a1:-90, a2:-57.273, a3:-24.545, a4:8.182, a5:40.909, a6:73.636,
+          a7:106.364, a8:139.091, a9:171.818, a10:204.545, a11:237.273
+        };
+        deg = map[aClass] ?? 0;
+      }
+      el.style.setProperty('--a', (deg + baseDeg) + 'deg');
+    });
+  }
+  applyAngles();
+
+  function setRadius(px){
+    stickers.forEach(el=> el.style.setProperty('--r', px + 'px'));
+    radiusRange.value = Math.round(px);
+    radiusRange.setAttribute('aria-valuenow', Math.round(px));
+  }
+  // init radius from computed style of first sticker
+  (function(){
+    const cs = getComputedStyle(stickers[0]);
+    const rMatch = cs.getPropertyValue('--r').trim();
+    const num = parseFloat(rMatch);
+    if(!isNaN(num)) setRadius(num);
+  })();
+
+  // Buttons
+  spinBtn.addEventListener('click', ()=>{ baseDeg += 12; applyAngles(); });
+  shuffleBtn.addEventListener('click', ()=>{
+    // Shuffle by reassigning equal-spaced base angles to stickers in random order
+    const baseAngles = [-90,-57.273,-24.545,8.182,40.909,73.636,106.364,139.091,171.818,204.545,237.273];
+    const shuffled = baseAngles.sort(()=>Math.random()-0.5);
+    stickers.forEach((el,i)=> el.style.setProperty('--a', (shuffled[i] + baseDeg) + 'deg'));
+  });
+
+  pulseBtn.addEventListener('click', ()=>{
+    const start = performance.now();
+    const duration = 900; // ms
+    const cs = getComputedStyle(stickers[0]);
+    const r0 = parseFloat(cs.getPropertyValue('--r')) || 520;
+    const r1 = r0 + 40;
+    function tick(t){
+      const k = Math.min(1, (t - start)/duration);
+      const ease = k<.5 ? (2*k*k) : (1 - Math.pow(-2*k+2,2)/2);
+      const r = r0 + (r1-r0) * Math.sin(ease*Math.PI);
+      setRadius(r);
+      if(k<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+
+  // Drag to rotate ring
+  ring.classList.add('drag-rotate');
+  let dragging = false, startX = 0, startBase = 0;
+  ring.addEventListener('pointerdown', (e)=>{
+    if(dragRingBtn.getAttribute('aria-pressed') !== 'true') return;
+    dragging = true; startX = e.clientX; startBase = baseDeg; ring.setPointerCapture(e.pointerId);
+  });
+  ring.addEventListener('pointermove', (e)=>{
+    if(!dragging) return;
+    const dx = e.clientX - startX;
+    baseDeg = startBase + dx * 0.3; // 0.3 deg per px
+    applyAngles();
+  });
+  ring.addEventListener('pointerup', (e)=>{ dragging=false; try{ ring.releasePointerCapture(e.pointerId);}catch{} });
+
+  dragRingBtn.addEventListener('click', ()=>{
+    const on = dragRingBtn.getAttribute('aria-pressed') === 'true';
+    dragRingBtn.setAttribute('aria-pressed', String(!on));
+  });
+
+  // Radius slider
+  radiusRange.addEventListener('input', (e)=> setRadius(parseFloat(e.target.value)) );
+
+  // Orbit text (animate startOffset)
+  let orbitId = null; let offset = 50; // percent
+  textOrbit.addEventListener('change', (e)=>{
+    if(e.target.checked){
+      orbitId = setInterval(()=>{
+        offset = (offset + 0.4) % 100; // loop 0..100
+        textPath.setAttribute('startOffset', offset + '%');
+      }, 16);
+    }else{
+      clearInterval(orbitId); orbitId = null; textPath.setAttribute('startOffset','50%');
+    }
+  });
+
+
+  // Keyboard controls
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowRight'){ baseDeg += 6; applyAngles(); }
+    if(e.key === 'ArrowLeft'){  baseDeg -= 6; applyAngles(); }
+    if(e.key === 'ArrowUp'){    setRadius(parseFloat(radiusRange.value)+6); }
+    if(e.key === 'ArrowDown'){  setRadius(parseFloat(radiusRange.value)-6); }
+  });
+
+  let purring = false;
+  function setStatus(msg){ /* audioStatus removed; no-op */ }
+
+  function unlockAudio(){
+    if(audioUnlocked) return;
+    // A user gesture is required on many browsers; calling play() once unlocks it
+    try{ purrAudio.muted = false; purrAudio.play().then(()=>{ purrAudio.pause(); audioUnlocked = true; }).catch(()=>{}); }catch(e){}
+  }
+
+  function startPurr(){
+    unlockAudio();
+    if(purring) return;
+    // Force MP3 source explicitly (robust on Safari/iOS and some local servers)
+    purrAudio.pause();
+    purrAudio.src = 'audio/cat_purr.mp3';
+    purrAudio.load();
+    purrAudio.currentTime = 0;
+    purrAudio.volume = 0.9; // louder
+
+    // Attach error handler
+    purrAudio.onerror = function(){
+      const err = purrAudio.error; // MediaError
+      let code = err ? err.code : 'unknown';
+      let map = {1:'Aborted',2:'Network',3:'Decode',4:'SRC not supported'};
+      setStatus('Audio error: ' + (map[code] || code) + ' — check path audio/cat_purr.mp3');
+      if(audioWarn) audioWarn.hidden = false;
+    };
+
+    const playPromise = purrAudio.play();
+    if(playPromise && playPromise.catch){
+      playPromise.catch((err)=>{
+        setStatus('Play blocked/missing file. Click Purr once or verify MP3 exists.');
+        if(audioWarn) audioWarn.hidden = false;
+        console.warn('Audio play blocked or missing file:', err);
+      });
+    } else {
+      setStatus('Playing…');
+    }
+    purring = true;
+    soundBtn.setAttribute('aria-pressed', 'true');
+  }
+  function stopPurr(){
+    if(!purring) return;
+    try{ purrAudio.pause(); }catch(e){}
+    purring = false;
+    soundBtn.setAttribute('aria-pressed', 'false');
+    setStatus('Stopped');
+  }
+
+
+  const centerImg = document.querySelector('.cat-main-center');
+  centerImg.addEventListener('click', ()=>{ audioUnlocked = true; purring ? stopPurr() : startPurr(); });
+  centerImg.addEventListener('mouseenter', ()=>{ if(audioUnlocked) startPurr(); });
+  centerImg.addEventListener('mouseleave', ()=>{ if(audioUnlocked) stopPurr(); });
+
+  function togglePurr(){ audioUnlocked = true; purring ? stopPurr() : startPurr(); }
+  soundBtn.addEventListener('click', togglePurr);
+  soundBtn.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); togglePurr(); } });
+
+  // Respect reduced motion
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.querySelectorAll('.floaty').forEach(el=> el.style.animation='none');
+    if(orbitId){ clearInterval(orbitId); orbitId=null; }
+  }
+})();
+</script>
 </html>

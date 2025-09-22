@@ -29,15 +29,37 @@
     .canvas::before{ background-image:url("images/njz/background.jpeg"); opacity:.3; }
     .canvas::after { background-image:url("images/njz/background2.jpeg"); opacity:.15; mix-blend-mode:overlay; }
 
+    /* ===== Global film grain overlay ===== */
+    .grain{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      mix-blend-mode:overlay; opacity:.18;
+    }
+    .grain{
+      background-image:
+        radial-gradient(rgba(255,255,255,.03) 1px, transparent 1.2px),
+        radial-gradient(rgba(0,0,0,.06) 1px, transparent 1.2px),
+        radial-gradient(rgba(255,255,255,.02) 1px, transparent 1.2px);
+      background-size: 3px 3px, 4px 4px, 5px 5px;
+      background-position: 0 0, 10px 5px, -10px -5px;
+      animation: grainShift 9s steps(10) infinite;
+    }
+    @keyframes grainShift{
+      0%{ background-position: 0 0, 10px 5px, -10px -5px; }
+      25%{ background-position: 5px -10px, 0 15px, -5px 0; }
+      50%{ background-position: -10px 10px, 5px 0, 10px -10px; }
+      75%{ background-position: 0 5px, -5px -5px, 0 10px; }
+      100%{ background-position: 0 0, 10px 5px, -10px -5px; }
+    }
+
     /* ===== 顶部 hero ===== */
     .hero {
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
       width: 100vw;
-      min-height: min(90vh,120vw);
+      min-height: min(60vh, 95vw);
       background-image: url("images/njz/newjeans.jpeg");
       background-size: cover;
-      background-position: center top;
+      background-position: center 30%;
       display: grid;
       place-items:end center;
       border-radius: 10px;
@@ -63,7 +85,7 @@
       grid-template-columns: repeat(12, 1fr);
       grid-auto-rows: 140px;
       gap:14px;
-      padding: 24px 20px 60px;
+      padding: 24px 20px 6px;
       isolation: isolate;
     }
     .piece img{ width:100%; display:block; border-radius:12px; }
@@ -89,26 +111,28 @@
     /* ===== 顶部贴纸舞台（不叠在大图上） + 底部整张IMG ===== */
     .sticker-stage{
       position: relative;
-      height: 28vh;                 /* 上方留白高度 */
+      height: 28vh;
       margin: 18px 0 6px;
       overflow: visible;
       isolation: isolate;
-      margin-left: calc(50% - 50vw);  /* 出血到两边 */
+      margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
     }
     .sticker-stage .sticker{ position:absolute; }
 
-    /* 底部整屏大图：使用 <img>，不裁切 */
     .hero-bottom{
-      margin-top: 32px;
+      margin-top: 0;
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
       text-align: center;
+      overflow: visible;
     }
     .bottom-img{
       display:block;
-      width: 100vw;      /* 铺满整屏宽度 */
-      height: auto;      /* 保持比例，不裁切 */
+      width: 100vw;      /* full viewport width */
+      max-width: 100vw;
+      height: auto;      /* keep natural ratio */
+      margin: 0 auto;    /* center in the full-bleed wrapper */
       border-radius: 10px;
     }
     .bottom-cap{ font-size:.85rem; color:#cfc; margin-top:.35rem; }
@@ -116,7 +140,7 @@
     /* 贴纸基础样式（放大尺寸） */
     .sticker {
       position: absolute;
-      width: 200px;                    /* 放大 */
+      width: 200px;
       height: auto;
       --r: -3deg;
       transform: rotate(var(--r));
@@ -133,13 +157,185 @@
     }
     .floaty { animation: floaty 6.5s ease-in-out infinite; }
 
-    /* 贴纸在舞台里的预设位置（可随时调整） */
     .sticker1 { top: 8%;  left: 8%; }
     .sticker2 { top: 4%;  right: 12%; }
     .sticker3 { bottom: 10%; left: 22%; }
     .sticker4 { bottom: 12%; right: 20%; }
     .sticker5 { top: 20%; left: 45%; }
 
+    /* === Big PLAY button === */
+    .music-cta{ width:min(1100px, 96vw); margin: 6px auto 18px; text-align:center; }
+    .play-hint{ margin:.35rem 0 0; font-size:.9rem; color:#cfc; opacity:.85; }
+
+    .play-btn{
+      --brat:#CCFF00;
+      display:inline-block; cursor:pointer; user-select:none;
+      font-family: Impact, Haettenschweiler, 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+      font-weight:900; letter-spacing:-0.02em; line-height:1;
+      font-size: clamp(40px, 10vw, 160px);
+      color: var(--brat);
+      background: transparent;
+      border: none; position: relative;
+      transform: rotate(-2deg) skewY(-2deg);
+      text-shadow: 0 0 6px rgba(0,0,0,.35), 0 6px 24px rgba(0,0,0,.55);
+      -webkit-text-stroke: 0.5px rgba(0,0,0,.35);
+      padding: .2em .25em;
+    }
+    .play-btn::after{
+      content:""; position:absolute; inset:-10px -14px; border-radius:16px;
+      background: transparent; border: 14px solid #fff; opacity:.85; z-index:-1;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,.45));
+      transform: rotate(2deg);
+    }
+    .play-btn[aria-pressed="true"]{ transform: rotate(0deg) skewY(0deg) scale(0.98); }
+    .play-btn[aria-pressed="true"]::after{ opacity:.75; }
+    @media (max-width:700px){ .play-btn::after{ inset:-6px -10px; border-width:10px; } }
+
+    /* === Video strip === */
+    .media-strip{
+      margin: 24px auto 18px;
+      width:min(1100px, 96vw);
+      aspect-ratio: 16 / 9;
+      position: relative;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px dashed #444;
+      background:#000;
+    }
+    .media-video{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      display:block; border:none; outline:none;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* ===== Section chrome ===== */
+    .njz-section{ width:min(1100px, 96vw); margin: 40px auto; }
+    .section-head{ text-align:center; margin-bottom: 16px; }
+    .section-head h2{ margin:0; font-size: clamp(24px, 3.6vw, 40px); }
+    .section-sub{ margin:.35rem 0 0; color:#cfc; opacity:.85; }
+
+    /* Small sticky TOC */
+    .toc{
+      position: sticky; top: 12px; z-index: 20;
+      width:min(1100px, 96vw); margin: 10px auto 0;
+      display:flex; gap: 10px; flex-wrap: wrap;
+    }
+    .toc a{
+      background:#1b1b1b; border:1px dashed #444; color:#eee;
+      padding:.45rem .7rem; border-radius:10px; text-decoration:none;
+      font-family:"Courier New", monospace; font-size:.9rem;
+    }
+    .toc a:hover{ background:#222; }
+
+    /* ===== Members ===== */
+    .member-card{ perspective: 1100px; }
+    .member-card{ min-height: clamp(240px, 34vw, 340px); }
+
+    /* ===== Paper texture overlays on cards ===== */
+    .member-card, .disc-card{ position:relative; }
+    .member-card.paper::after, .disc-card.paper::after{
+      content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+      background-image: url('images/textures/paper.jpg'),
+                        linear-gradient(rgba(255,255,255,.08), rgba(0,0,0,.06));
+      background-size: cover; background-position:center; mix-blend-mode:multiply; opacity:.35;
+      border-radius:14px;
+    }
+
+    /* ===== HORIZONTAL RAIL — members & discs ===== */
+    .rail-wrap{ position:relative; width:min(1100px, 96vw); margin: 24px auto 8px; }
+    .rail{ display:grid; grid-auto-flow: column; grid-auto-columns: clamp(240px, 28vw, 360px);
+           gap:14px; overflow-x:auto; overflow-y:visible; padding: 10px 6px 18px; scroll-snap-type:x mandatory;
+           -webkit-overflow-scrolling: touch; }
+    .rail::-webkit-scrollbar{ height:8px; }
+    .rail::-webkit-scrollbar-thumb{ background:#333; border-radius:6px; }
+    .rail > *{ scroll-snap-align: start; }
+
+    .rail-nav{ position:absolute; inset:0; pointer-events:none; }
+    .rail-btn{ pointer-events:auto; position:absolute; top:50%; transform: translateY(-50%);
+               background:#111; color:#eee; border:1px dashed #444; border-radius:50%;
+               width:42px; height:42px; display:grid; place-items:center; cursor:pointer;
+               filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
+    .rail-btn.left{ left:-18px; } .rail-btn.right{ right:-18px; }
+    .rail-btn:hover{ background:#181818; }
+
+    /* Member card: flip */
+    .member-card{ perspective: 1100px; }
+    .card-inner{ position:relative; transform-style:preserve-3d; transition: transform .6s cubic-bezier(.2,.7,.2,1); height:100%; }
+    .card-face{ position:absolute; inset:0; backface-visibility:hidden; }
+    .card-front{ display:grid; grid-template-columns: 42% 58%; }
+
+    /* Uniform portrait sizing */
+    .portrait{ aspect-ratio: 3 / 4; border-radius:12px; overflow:hidden; }
+    .portrait img{ width:100%; height:100%; object-fit: cover; object-position:center; display:block; }
+
+    .card-back{ transform: rotateY(180deg); display:flex; flex-direction:column; justify-content:center; gap:.35rem;
+                background:#131313; border:1px dashed #444; border-radius:14px; padding: 16px 18px; }
+    .facts{ list-style:none; padding:0; margin:0; display:grid; gap:.35rem; }
+    .facts li{ display:flex; justify-content:space-between; gap:10px; border-bottom:1px dashed #333; padding-bottom:.25rem; }
+    .facts .k{ color:#bfe; font-size:.9rem; }
+    .facts .v{ color:#eee; font-weight:600; }
+
+    /* Disc cards in a rail */
+    .disc-card{ grid-template-columns: 40% 60%; min-height: 180px; }
+
+    .drag-hint{ width:min(1100px, 96vw); margin: 0 auto 12px; text-align:center; color:#cfc; opacity:.75; font-size:.85rem; }
+
+    .member-card:hover .card-inner, .member-card.flipped .card-inner{ transform: rotateY(180deg); }
+
+    /* ===== Discography ===== */
+    .disc-card:hover{ box-shadow: 0 0 0 2px rgba(204,255,0,.15), 0 10px 26px rgba(0,0,0,.35); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px){
+      .member-card, .disc-card{ grid-column: 1 / -1; }
+      .member-card{ grid-template-columns: 40% 60%; }
+      .disc-card{ grid-template-columns: 34% 66%; }
+    }
+    @media (max-width: 640px){
+      .member-card, .disc-card{ grid-template-columns: 1fr; }
+    }
+
+    /* === Below-collage grid (aesthetic reflow) === */
+    .below-collage{
+      display:grid; grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 120px;
+      gap:12px; width:min(1100px, 96vw);
+      margin: 10px auto 40px;
+    }
+    .below-collage .b img{ width:100%; height:100%; object-fit: cover; border-radius:12px; display:block; }
+    .below-collage .b figcaption{ font-size:.8rem; color:#cfc; margin-top:.35rem; }
+
+    .below-collage .a{ grid-column: 1 / 5;  grid-row: span 2; }
+    .below-collage .big{
+      grid-column: 5 / 10; grid-row: span 2;
+      background:rgba(255,255,200,.88); color:#111;
+      border:1px dashed #333; border-radius:12px;
+      padding:1.1rem; display:flex; align-items:center; justify-content:center; text-align:center;
+      font-family:"Courier New", monospace; font-size: clamp(16px, 2.2vw, 22px);
+    }
+    .below-collage .c{ grid-column: 10 / -1; grid-row: span 3; }
+    .below-collage .d{ grid-column: 1 / 8;  grid-row: span 2; }
+    .below-collage .small{
+      grid-column: 8 / -1; grid-row: span 1;
+      background:#1b1b1b; border:1px dashed #444; border-radius:12px; padding:.8rem; color:#cfc; display:flex; align-items:center;
+    }
+    .below-collage .e{ grid-column: 8 / -1; grid-row: span 2; }
+
+    @media (max-width: 900px){
+      .below-collage{ grid-template-columns: repeat(8, 1fr); grid-auto-rows: 110px; }
+      .below-collage .a{ grid-column:1 / 5; }
+      .below-collage .big{ grid-column:5 / -1; }
+      .below-collage .c{ grid-column:1 / 6; }
+      .below-collage .d{ grid-column:6 / -1; }
+      .below-collage .small{ grid-column:1 / -1; }
+      .below-collage .e{ grid-column:1 / -1; }
+    }
+    @media (max-width: 600px){
+      .below-collage{ grid-template-columns: repeat(4, 1fr); grid-auto-rows: 100px; }
+      .below-collage .a, .below-collage .big, .below-collage .c, .below-collage .d, .below-collage .small, .below-collage .e{ grid-column:1 / -1; }
+    }
     @media (max-width: 600px){
       .sticker { width: 140px; }
     }
@@ -153,18 +349,24 @@
     <a href="cat.html">My Cat</a>
   </nav>
 
+  <!-- Background music -->
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="media/asap.mp3" type="audio/mpeg"/>
+  </audio>
+
   <div class="canvas">
+    <div class="grain" aria-hidden="true"></div>
     <header class="page-header">
       <h1>Things I’m Into</h1>
-      <p class="subtitle">Taylor Swift · NewJeans · Olivia Rodrigo</p>
+      <p class="subtitle">NewJeans — members · eras · favorite moments</p>
     </header>
 
     <!-- 顶部 hero -->
     <section class="hero" aria-label="NewJeans hero">
-      <div class="tag">✦ dreamy ✦</div>
+      <div class="tag">new jeans, new page</div>
     </section>
 
-    <!-- 顶部贴纸舞台（在上方空隙处，不叠在大图上） -->
+    <!-- 顶部贴纸舞台 -->
     <section class="sticker-stage" aria-label="sticker stage">
       <img src="images/njz/haerin.png"   alt="Haerin sticker"   class="sticker sticker1 floaty">
       <img src="images/njz/danielle.png" alt="Danielle sticker" class="sticker sticker2 floaty">
@@ -173,23 +375,264 @@
       <img src="images/njz/minji.png"    alt="Minji sticker"    class="sticker sticker5 floaty">
     </section>
 
+    <!-- Big PLAY button -->
+    <section class="music-cta" aria-label="music control">
+      <button id="playBig" class="play-btn" aria-label="Play ASAP by NewJeans" aria-pressed="false">PLAY</button>
+      <p class="play-hint">Click to start music · <span>ASAP — NewJeans</span></p>
+    </section>
+
+    <!-- Video strip -->
+    <section class="media-strip" aria-label="video strip">
+      <video id="njzVideo" class="media-video" src="media/njz.mp4" playsinline autoplay muted loop></video>
+    </section>
+
+    <!-- TOC -->
+    <nav class="toc">
+      <a href="#members">Members & Styles</a>
+      <a href="#discography">Eras & Releases</a>
+    </nav>
+
+    <!-- ===== Members ===== -->
+    <section id="members" class="njz-section">
+      <header class="section-head">
+        <h2>Members</h2>
+        <p class="section-sub">five voices · five styles · one NewJeans</p>
+      </header>
+
+      <div class="rail-wrap">
+        <div class="rail member-rail" id="memberRail">
+          <!-- MINJI -->
+          <article class="member-card paper">
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <figure class="portrait">
+                  <img src="images/njz/members/minji.jpg" alt="Minji portrait">
+                </figure>
+                <div class="member-body">
+                  <h3>MINJI</h3>
+                  <p class="tags"></p>
+                  <p class="blurb">– Minji writes once a week in her diary and uses a lot of stickers.</p>
+                </div>
+              </div>
+              <div class="card-face card-back">
+                <ul class="facts">
+                  <li><span class="k">Representative Emoji</span><span class="v">🧸</span></li>
+                  <li><span class="k">Birthday</span><span class="v">May 7, 2004</span></li>
+                  <li><span class="k">MBTI</span><span class="v">ESTJ</span></li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- HAERIN (moved up) -->
+          <article class="member-card paper">
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <figure class="portrait">
+                  <img src="images/njz/members/haerin.jpg" alt="Haerin portrait">
+                </figure>
+                <div class="member-body">
+                  <h3>HAERIN</h3>
+                  <p class="tags"></p>
+                  <p class="blurb">- Her essential items are her wired earphones and scrunchies.</p>
+                </div>
+              </div>
+              <div class="card-face card-back">
+                <ul class="facts">
+                  <li><span class="k">Representative Emoji</span><span class="v">🐱</span></li>
+                  <li><span class="k">Birthday</span><span class="v">May 15, 2006</span></li>
+                  <li><span class="k">MBTI</span><span class="v">INTP</span></li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- DANIELLE -->
+          <article class="member-card paper">
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <figure class="portrait">
+                  <img src="images/njz/members/danielle.jpg" alt="Danielle portrait">
+                </figure>
+                <div class="member-body">
+                  <h3>DANIELLE</h3>
+                  <p class="tags"></p>
+                  <p class="blurb">- If she had to choose a stage name for a day, she would choose “Jerry Jamaica”.</p>
+                </div>
+              </div>
+              <div class="card-face card-back">
+                <ul class="facts">
+                  <li><span class="k">Representative Emoji</span><span class="v">🐶</span></li>
+                  <li><span class="k">Birthday</span><span class="v">April 11, 2005</span></li>
+                  <li><span class="k">MBTI</span><span class="v">ENFP</span></li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- HANNI (moved down) -->
+          <article class="member-card paper">
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <figure class="portrait">
+                  <img src="images/njz/members/hanni.jpg" alt="Hanni portrait">
+                </figure>
+                <div class="member-body">
+                  <h3>HANNI</h3>
+                  <p class="tags"></p>
+                  <p class="blurb">– If she had to choose a stage name for a day, she would choose “Cherry Pham”.</p>
+                </div>
+              </div>
+              <div class="card-face card-back">
+                <ul class="facts">
+                  <li><span class="k">Representative Emoji</span><span class="v">🦦 </span></li>
+                  <li><span class="k">Birthday</span><span class="v">October 6, 2004</span></li>
+                  <li><span class="k">MBTI</span><span class="v">INFP</span></li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- HYEIN -->
+          <article class="member-card paper">
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <figure class="portrait">
+                  <img src="images/njz/members/hyein.jpg" alt="Hyein portrait">
+                </figure>
+                <div class="member-body">
+                  <h3>HYEIN</h3>
+                  <p class="tags"></p>
+                  <p class="blurb">– If she were to become a grandmother, she would be drinking hot chocolate while knitting.</p>
+                </div>
+              </div>
+              <div class="card-face card-back">
+                <ul class="facts">
+                  <li><span class="k">Representative Emoji</span><span class="v">🐹</span></li>
+                  <li><span class="k">Birthday</span><span class="v">April 21, 2008</span></li>
+                  <li><span class="k">MBTI</span><span class="v">ISFP</span></li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="rail-nav">
+          <button class="rail-btn left"  data-target="#memberRail" aria-label="Scroll left">◀</button>
+          <button class="rail-btn right" data-target="#memberRail" aria-label="Scroll right">▶</button>
+        </div>
+      </div>
+      <div class="drag-hint">drag to browse · flip on hover / tap</div>
+    </section>
+
+    <!-- ===== Discography ===== -->
+    <section id="discography" class="njz-section">
+      <header class="section-head">
+        <h2>Discography</h2>
+        <p class="section-sub">clean hooks · playful concepts · high-replay pop</p>
+      </header>
+
+      <div class="rail-wrap">
+        <div class="rail disc-rail" id="discRail">
+          <article class="disc-card paper" data-type="editorial">
+            <figure class="cover">
+              <img src="images/njz/disc/new-jeans-ep.jpg" alt="New Jeans EP cover">
+            </figure>
+            <div class="disc-body">
+              <h3>New Jeans (EP)</h3>
+              <p class="tracks">Standouts: “Attention”, “Hype Boy”, “Cookie”</p>
+              <p class="note">Airy intros and light percussion; choreography that feels casual until it’s stuck in your head.</p>
+            </div>
+          </article>
+
+          <article class="disc-card paper" data-type="mv">
+            <figure class="cover">
+              <img src="images/njz/disc/omg-ditto.jpg" alt="OMG / Ditto cover">
+            </figure>
+            <div class="disc-body">
+              <h3>OMG / Ditto</h3>
+              <p class="tracks">Standouts: “Ditto”, “OMG”</p>
+              <p class="note">Cold-tone nostalgia and warm choruses—handheld vibes, schoolyard colors, and instant memes.</p>
+            </div>
+          </article>
+
+          <article class="disc-card paper" data-type="mv">
+            <figure class="cover">
+              <img src="images/njz/disc/get-up.jpg" alt="Get Up EP cover">
+            </figure>
+            <div class="disc-body">
+              <h3>Get Up (EP)</h3>
+              <p class="tracks">Standouts: “Super Shy”, “ETA”, “Cool With You”</p>
+              <p class="note">Short tracks, zero filler. Hooks sprint by; bass does the talking; replay button overworked.</p>
+            </div>
+          </article>
+
+          <article class="disc-card paper" data-type="editorial">
+            <figure class="cover">
+              <img src="images/njz/disc/how-sweet.jpg" alt="How Sweet cover">
+            </figure>
+            <div class="disc-body">
+              <h3>How Sweet</h3>
+              <p class="tracks">Standouts: “How Sweet”, “Bubble Gum”</p>
+              <p class="note">Glossy bounce and chewy melodies—summer sugar with clean, graphic styling.</p>
+            </div>
+          </article>
+        </div>
+        <div class="rail-nav">
+          <button class="rail-btn left"  data-target="#discRail" aria-label="Scroll left">◀</button>
+          <button class="rail-btn right" data-target="#discRail" aria-label="Scroll right">▶</button>
+        </div>
+      </div>
+      <div class="drag-hint">filter · drag · or tap ◀ ▶</div>
+    </section>
+
+    <!-- === Below-collage === -->
+    <section class="below-collage" aria-label="reflow collage">
+      <figure class="b a">
+        <img src="images/njz/njz3.jpeg" alt="NewJeans candid"/>
+        <figcaption>practice room candid</figcaption>
+      </figure>
+
+      <article class="b note big">
+        <p>favorite moments: “ETA” point move · “Super Shy” chorus hands · airport fits</p>
+      </article>
+
+      <figure class="b c tall">
+        <img src="images/njz/newjeans%20mv.jpeg" alt="NewJeans MV still"/>
+        <figcaption>mv still — quick cut</figcaption>
+      </figure>
+
+      <figure class="b d wide">
+        <img src="images/njz/new%20jeans.jpeg" alt="NewJeans studio photo"/>
+        <figcaption>studio light — clean lines</figcaption>
+      </figure>
+
+      <article class="b note small">
+        <p>notes: pastel → neon → back to soft</p>
+      </article>
+
+      <figure class="b e">
+        <img src="images/njz/_%20(1).jpeg" alt="NewJeans backstage"/>
+        <figcaption>backstage — pre-show quiet</figcaption>
+      </figure>
+    </section>
+
     <!-- 中间拼贴 -->
     <section class="masonry" aria-label="NewJeans collage">
       <figure class="piece a"><img src="images/njz/njz3.jpeg" alt="NewJeans candid"></figure>
-      <figure class="piece b"><img src="images/njz/newjeans%20mv.jpeg" alt="NewJeans MV still"></figure>
-      <article class="note">i like how their visuals feel playful + precise.<br>glossy, then grainy. cute, then uncanny.</article>
-      <figure class="piece c"><img src="images/njz/new%20jeans.jpeg" alt="NewJeans studio photo"></figure>
-      <figure class="piece d"><img src="images/njz/_%20(1).jpeg" alt="NewJeans backstage"></figure>
+      <figure class="piece b"><img src="images/njz/new%20jeans.jpeg" alt="NewJeans MV still"></figure>
+      
+      <!-- <figure class="piece c"><img src="images/njz/new%20jeans.jpeg" alt="NewJeans studio photo"></figure> -->
+      <!-- <figure class="piece d"><img src="images/njz/_%20(1).jpeg" alt="NewJeans backstage"></figure> -->
     </section>
 
-    <!-- 底部整屏大图（不裁切） -->
+    <!-- 底部整屏大图 -->
     <section class="hero-bottom" aria-label="bottom poster">
       <img src="images/njz/njz4.png" alt="NewJeans full poster" class="bottom-img">
       <figcaption class="bottom-cap">evening patrol</figcaption>
     </section>
   </div>
 
-  <!-- 随机化贴纸动画 -->
+  <!-- 随机化贴纸动画 & 交互 -->
   <script>
     document.querySelectorAll('.floaty').forEach((el)=>{
       const delay = (Math.random()*2).toFixed(2)+'s';
@@ -198,6 +641,81 @@
       el.style.animationDuration = dur;
       el.style.setProperty('--r', (Math.random()*6-3).toFixed(2)+'deg');
     });
+
+    // Background music toggle with fade
+    (function(){
+      const btn = document.getElementById('playBig');
+      const audio = document.getElementById('bgMusic');
+      if(!btn || !audio) return;
+
+      let unlocked = false, playing = false, targetVol = 0.85, fadeId = null;
+
+      function unlock(){ if(unlocked) return; audio.play().then(()=>{audio.pause();unlocked=true;}).catch(()=>{}); }
+      function fade(to, ms){
+        if(fadeId) cancelAnimationFrame(fadeId);
+        const start = performance.now(), from = audio.volume;
+        const tick = (t)=>{ const k=Math.min(1,(t-start)/ms); audio.volume = from + (to-from)*k; if(k<1) fadeId=requestAnimationFrame(tick); };
+        fadeId = requestAnimationFrame(tick);
+      }
+      function ensureSrc(){ if(!audio.currentSrc || !audio.currentSrc.includes('media/asap.mp3')){ audio.pause(); audio.src='media/asap.mp3'; audio.load(); } }
+
+      async function play(){
+        unlock(); ensureSrc();
+        try{ audio.volume = 0; await audio.play(); fade(targetVol,700); playing=true; btn.setAttribute('aria-pressed','true'); btn.textContent='PAUSE'; }
+        catch(e){ console.warn('Audio play blocked:', e); }
+      }
+      function pause(){ fade(0,300); setTimeout(()=>audio.pause(),320); playing=false; btn.setAttribute('aria-pressed','false'); btn.textContent='PLAY'; }
+
+      btn.addEventListener('click', ()=> playing ? pause() : play());
+      btn.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); playing ? pause() : play(); } });
+      const prime=()=>{ unlock(); window.removeEventListener('pointerdown',prime); window.removeEventListener('keydown',prime); };
+      window.addEventListener('pointerdown', prime); window.addEventListener('keydown', prime);
+    })();
+
+    // Video auto play/pause on visibility
+    (function(){
+      const vid = document.getElementById('njzVideo');
+      if(!vid) return;
+      if('IntersectionObserver' in window){
+        const io = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{ if(e.isIntersecting){ vid.play().catch(()=>{}); } else { try{ vid.pause(); }catch(_){} }});
+        }, { threshold: 0.15 });
+        io.observe(vid);
+      } else { vid.play().catch(()=>{}); }
+    })();
+
+    // Rail helpers (buttons + drag/swipe)
+    (function(){
+      const $ = (s,root=document)=>root.querySelector(s);
+      const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
+      function scrollByCard(rail, dir=1){
+        const first = rail.firstElementChild; if(!first) return;
+        const w = first.getBoundingClientRect().width + 14;
+        rail.scrollBy({ left: dir*w, behavior:'smooth' });
+      }
+      $$('.rail-btn').forEach(btn=>{
+        const rail = $(btn.getAttribute('data-target')); if(!rail) return;
+        btn.addEventListener('click', ()=> scrollByCard(rail, btn.classList.contains('right')?+1:-1));
+      });
+      $$('.rail').forEach(rail=>{
+        let x0=0, sx=0, drag=false;
+        const down = (e)=>{ drag=true; x0=(e.touches?e.touches[0].clientX:e.clientX); sx=rail.scrollLeft; rail.classList.add('dragging'); };
+        const move = (e)=>{ if(!drag) return; const x=(e.touches?e.touches[0].clientX:e.clientX); rail.scrollLeft = sx - (x-x0); };
+        const up = ()=>{ drag=false; rail.classList.remove('dragging'); };
+        rail.addEventListener('pointerdown',down); rail.addEventListener('pointermove',move); window.addEventListener('pointerup',up);
+        rail.addEventListener('touchstart',down,{passive:true}); rail.addEventListener('touchmove',move,{passive:true}); rail.addEventListener('touchend',up);
+      });
+    })();
+
+    // Tap-to-flip for member cards
+    (function(){
+      document.querySelectorAll('.member-card').forEach(card=>{
+        card.addEventListener('click', (e)=>{
+          if(e.target.closest('a, button')) return;
+          card.classList.toggle('flipped');
+        });
+      });
+    })();
   </script>
 </body>
 </html>

@@ -3,160 +3,153 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Diary Collage</title>
+  <title>Home — Collage Lab</title>
   <link rel="stylesheet" href="style.css"/>
 
-  <!-- Page-scoped styles for the Home (Diary) page -->
   <style>
-    /* 背景画布：两层底纹，可与 interests 保持一致的氛围 */
-    .canvas {
-      position: relative;
-      min-height: 100dvh;
-      overflow-x: hidden;
-      background: #111;
-      z-index: 0;
+    /* ===== Global canvas (reuse site vibe) ===== */
+    body.home { color:#eee; }
+    .canvas{
+      position:relative; min-height:100dvh; overflow-x:hidden; background:#111; z-index:0;
     }
     .canvas::before,
     .canvas::after{
-      content:"";
-      position: fixed;
-      inset: 0;
-      background-repeat:no-repeat;
-      background-size:cover;
-      background-position:center;
-      z-index:-2;
-      pointer-events:none;
+      content:""; position:fixed; inset:0; pointer-events:none; z-index:-2;
+      background-repeat:no-repeat; background-size:cover; background-position:center;
     }
-    /* 你也可以换成自己的纸张/纹理图；先复用 njz 背景，保持整站风格统一 */
-    
-    .canvas::before { background-image:url("images/njz/background2.jpeg"); opacity:.28; }
-    /* .canvas::after { background-image:url("images/njz/background2.jpeg"); opacity:.12; mix-blend-mode:overlay; } */
+    .canvas::before{ background-image:url("images/njz/background2.jpeg"); opacity:.28; }
+    .canvas::after { background-image: radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.05), transparent 50%); mix-blend-mode:overlay; }
 
-    /* 顶部 hero：用你的夜晚书桌图铺满（可裁切） */
-    .hero{
-      margin-left: calc(50% - 50vw);
-      margin-right: calc(50% - 50vw);
-      width: 100vw;
-      min-height: min(75vh,120vw);
-      background-image:url("images/my_cat/IMG_3426%202.PNG");
-      background-size: cover;              /* 顶部可轻裁切以呈现“海报感” */
-      background-position: center 30%;
-      display:grid; place-items:end center;
-      border-radius:10px; overflow:hidden; isolation:isolate;
+    /* Subtle film grain */
+    .grain{ position:fixed; inset:0; z-index:0; pointer-events:none; mix-blend-mode:overlay; opacity:.18;
+      background-image:
+       radial-gradient(rgba(255,255,255,.03) 1px, transparent 1.2px),
+       radial-gradient(rgba(0,0,0,.06) 1px, transparent 1.2px),
+       radial-gradient(rgba(255,255,255,.02) 1px, transparent 1.2px);
+      background-size: 3px 3px, 4px 4px, 5px 5px;
+      background-position: 0 0, 10px 5px, -10px -5px;
+      animation: grainShift 9s steps(10) infinite;
     }
-    .hero .tag{ margin:1rem; padding:.45rem .8rem; font-family:"Courier New", monospace; font-size:.9rem; color:#111; background:rgba(255,255,200,.9); border:1px dashed #333; transform:rotate(-1.5deg); filter:drop-shadow(2px 2px 5px rgba(0,0,0,.35)); }
-
-    /* 顶部贴纸舞台（不叠在大图上） */
-    .sticker-stage{ position:relative; height:26vh; margin: 16px 0 6px; overflow:visible; isolation:isolate; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); }
-    .sticker-stage .sticker{ position:absolute; }
-
-    /* Diary 拼贴网格（新的不规则布局） */
-    .masonry{
-      position:relative; display:grid; grid-template-columns:repeat(12,1fr); grid-auto-rows:140px; gap:14px; padding: 18px 20px 36px; isolation:isolate;
+    @keyframes grainShift{
+      0%{ background-position: 0 0, 10px 5px, -10px -5px; }
+      50%{ background-position: -10px 10px, 5px 0, 10px -10px; }
+      100%{ background-position: 0 0, 10px 5px, -10px -5px; }
     }
-    .piece img{ width:100%; display:block; border-radius:12px; background:transparent; }
-    .a{ grid-column:2/7;  grid-row: span 4; transform:rotate(-1.6deg); }
-    .b{ grid-column:7/12; grid-row: span 3; transform:rotate(1.2deg); }
-    .c{ grid-column:4/9;  grid-row: span 3; transform:rotate(-.8deg); z-index:2; }
-    .d{ grid-column:9/12; grid-row: span 2; transform:rotate(2deg); }
 
-    /* 文字贴纸（日记短句） */
-    .note-sticker{ grid-column:2/5; grid-row:span 1; align-self:start; background:rgba(255,255,200,.88); color:#111; border:1px dashed #333; border-radius:12px; padding:.8rem .9rem; font-family:"Courier New", monospace; transform:rotate(1.2deg); filter:drop-shadow(2px 2px 5px rgba(0,0,0,.28)); }
-    .note-sticker.small{ grid-column:6/8; transform:rotate(-1.1deg); }
-    .note-sticker.right{ grid-column:10/12; transform:rotate(.6deg); }
+    /* ===== Header ===== */
+    header.site{
+      width:min(1100px, 96vw); margin: 28px auto 12px; text-align:center;
+    }
+    header.site h1{
+      margin:0; font-size: clamp(28px, 5.5vw, 56px);
+      letter-spacing:.02em;
+    }
+    header.site p{ margin:.4rem 0 0; color:#cfc; opacity:.9; }
 
-    /* 新功能：横向时间轴（可左右滑动） */
-    .timeline{ margin: 8px 0 28px; padding: 12px 0; overflow:auto; display:grid; grid-auto-flow:column; grid-auto-columns: min(70vw, 420px); gap:14px; scroll-snap-type:x mandatory; }
-    .t-card{ scroll-snap-align:start; background:#1b1b1b; border:1px dashed #444; border-radius:14px; padding:14px; }
-    .t-card h3{ margin:.2rem 0 .4rem; font-size:1rem; }
-    .t-card p{ margin:0; color:#cfc; font-size:.9rem; }
+    /* ===== Choice tiles ===== */
+    .choice-grid{
+      width:min(1100px, 96vw); margin: 18px auto; display:grid; gap:16px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .tile{
+      position:relative; grid-column: span 6; min-height: clamp(280px, 42vw, 440px);
+      display:block; text-decoration:none; color:#eee; isolation:isolate; border-radius:16px; overflow:hidden;
+      border:1px dashed #444; background:#0f0f0f;
+      transform: translateZ(0);
+    }
+    .tile::before{
+      content:""; position:absolute; inset:0; z-index:-1;
+      background-size: cover; background-position: center;
+      filter: contrast(1.02) saturate(1.05);
+      transform: scale(1.04);
+      transition: transform .6s cubic-bezier(.2,.8,.2,1);
+    }
+    /* specific images */
+    .tile.njz::before{ background-image:url("images/njz/_ (1).jpeg"); }
+    .tile.cat::before{ background-image:url("images/my_cat/IMG_3416.PNG"); background-position:center 60%; }
 
-    /* 底部整屏大图：用 <img> 防裁切（夜雨霓虹） */
-    .hero-bottom{ margin-top: 24px; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); text-align:center; }
-    .bottom-img{ display:block; width:100vw; height:auto; border-radius:10px; }
-    .bottom-cap{ font-size:.85rem; color:#cfc; margin-top:.35rem; }
+    /* gradient veil for readability */
+    .tile::after{
+      content:""; position:absolute; inset:0; background:
+        linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.45) 60%, rgba(0,0,0,.6) 100%);
+      mix-blend-mode:multiply; opacity:.9; pointer-events:none;
+      transition: opacity .35s ease;
+    }
 
-    /* 贴纸基础（沿用站内系统并放大） */
-    .sticker{ position:absolute; width: 180px; height:auto; --r:-3deg; transform:rotate(var(--r)); filter:drop-shadow(3px 3px 6px rgba(0,0,0,.4)); transition:transform .3s ease; will-change:transform; }
-    .sticker:hover{ transform:scale(1.08) rotate(0deg); z-index:10; }
-    @keyframes floaty{ 0%{ transform:translateY(0) rotate(var(--r,-3deg)); } 50%{ transform:translateY(-10px) rotate(calc(var(--r,-3deg) + .6deg)); } 100%{ transform:translateY(0) rotate(var(--r,-3deg)); } }
-    .floaty{ animation: floaty 6.5s ease-in-out infinite; }
+    .tile:hover::before{ transform: scale(1.09); }
+    .tile:hover::after{ opacity:.75; }
+    .tile:focus-visible{ outline:2px solid #CCFF00; outline-offset:2px; }
 
-    /* 贴纸在舞台里的预设位置 */
-    .s1{ top:10%; left:8%; }
-    .s2{ top:6%; right:12%; }
-    .s3{ bottom:12%; left:22%; }
-    .s4{ bottom:10%; right:20%; }
-    .s5{ top:18%; left:46%; }
+    .tile-inner{
+      position:absolute; inset:0; padding:18px; display:flex; flex-direction:column; justify-content:flex-end; gap:.5rem;
+    }
+    .eyebrow{
+      display:inline-block; font-family:"Courier New", monospace; background:rgba(255,255,200,.9);
+      color:#111; border:1px dashed #333; padding:.3rem .55rem; border-radius:10px; transform:rotate(-2deg);
+      align-self:flex-start;
+    }
+    .tile h2{ margin:.2rem 0 0; font-size: clamp(22px, 3.6vw, 36px); }
+    .tile p{ margin:.2rem 0 0; color:#dfe; opacity:.9; max-width: 48ch; }
 
-    @media (max-width: 900px){ .masonry{ grid-template-columns:repeat(8,1fr); grid-auto-rows:120px; } .a{grid-column:1/6}.b{grid-column:5/9}.c{grid-column:2/8}.d{grid-column:6/9} }
-    @media (max-width: 600px){ .masonry{ grid-template-columns:repeat(4,1fr); grid-auto-rows:110px; } .a,.b,.c,.d{ grid-column:1/5; } .note-sticker{ grid-column:1/5; } .sticker{ width:130px; } .sticker-stage{ height:22vh; } }
-    @media (prefers-reduced-motion: reduce){ .floaty{ animation:none!important; } .piece, .note-sticker{ transition:none!important; } }
+    /* tiny captions under grid */
+    .hint{ width:min(1100px, 96vw); margin: 6px auto 20px; text-align:center; color:#cfc; opacity:.8; }
+
+    /* ===== Footer nav (plain links) ===== */
+    footer{ width:min(1100px, 96vw); margin: 24px auto 40px; text-align:center; color:#9f9; opacity:.75; }
+    footer a{ color:#ffccff; text-decoration:none; }
+    footer a:hover{ text-decoration:underline; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px){
+      .tile{ grid-column: 1 / -1; min-height: 52vw; }
+    }
+    @media (max-width: 560px){
+      header.site{ margin-top: 18px; }
+      .tile{ min-height: 58vw; }
+    }
   </style>
 </head>
 
-<body class="page1">
+<body class="home">
   <nav aria-label="Primary">
-    <a href="index.html">Home</a> |
+    <a href="index.html" aria-current="page">Home</a> |
     <a href="interests.html">Interests</a> |
     <a href="cat.html">My Cat</a>
   </nav>
 
   <div class="canvas">
-    <header class="page-header">
-      <h1>Diary Collage</h1>
-      <p class="subtitle">small moments · late nights · tiny wins</p>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site" role="banner">
+      <h1>Collage Lab</h1>
+      <p>✶ pick a page to enter ✶</p>
     </header>
 
-    <!-- 顶部 hero：夜晚书桌海报感 -->
-    <section class="hero" aria-label="Diary hero">
-      <div class="tag">note to self · keep collecting quiet things</div>
-    </section>
+    <main class="choice-grid" id="main">
+      <!-- Tile 1: NewJeans -->
+      <a class="tile njz" href="interests.html">
+        <div class="tile-inner">
+          <span class="eyebrow">NewJeans</span>
+          <!-- <h2>Moodboard · Members · Discography</h2>
+          <p>magazine‑wall collage · playful rails · looping clip · big PLAY</p> -->
+        </div>
+      </a>
 
-    <!-- 顶部贴纸舞台（放在空隙处，不叠大图） -->
-    <section class="sticker-stage" aria-label="sticker stage">
-      <!-- 你可以把这些换成猫或其它 PNG；先用你的图片做“贴纸”示意 -->
-      <img src="images/my_cat/IMG_3427.PNG" alt="sticker: subway blur" class="sticker s1 floaty">
-      <img src="images/my_cat/IMG_3428.PNG" alt="sticker: morning window" class="sticker s2 floaty">
-      <img src="images/my_cat/IMG_3429.PNG" alt="sticker: notebook doodle" class="sticker s3 floaty">
-      <img src="images/my_cat/IMG_3416.PNG" alt="sticker: neon rain" class="sticker s4 floaty">
-      <img src="images/my_cat/IMG_3426.PNG" alt="sticker: night desk" class="sticker s5 floaty">
-    </section>
+      <!-- Tile 2: My Cat -->
+      <a class="tile cat" href="cat.html">
+        <div class="tile-inner">
+          <span class="eyebrow">My Cat</span>
+          <!-- <h2>Orbit Collage · Arc Text · Purr</h2>
+          <p>giant fur planet in the center · stickers in a ring · tap to purr</p> -->
+        </div>
+      </a>
+    </main>
 
-    <!-- Diary 拼贴：不规则网格 + 日记贴纸 -->
-    <section class="masonry" aria-label="diary collage grid">
-      <figure class="piece a"><img src="images/my_cat/IMG_3427.PNG" alt="Blurred subway window, streaks of light running backwards"></figure>
-      <figure class="piece b"><img src="images/my_cat/IMG_3428.PNG" alt="Morning light through the window onto a messy table"></figure>
-      <article class="note-sticker">3:07am — made tea. the city felt far away but kind.</article>
-      <figure class="piece c"><img src="images/my_cat/IMG_3429.PNG" alt="Notebook doodle — stars and squiggly lines"></figure>
-      <article class="note-sticker small">tiny wins: watered the plant; sent a brave text.</article>
-      <figure class="piece d"><img src="images/my_cat/IMG_3416.PNG" alt="Neon reflections on wet asphalt at night"></figure>
-      <article class="note-sticker right">reminder: collect quiet things; they grow louder later.</article>
-    </section>
+    <!-- <p class="hint">tip — tiles are keyboard‑focusable; press Enter to open</p> -->
 
-    <!-- 新功能：横向时间轴（可滑动） -->
-    <section class="timeline" aria-label="timeline">
-      <div class="t-card"><h3>Mon</h3><p>cat slept on keyboard. chaos = love.</p></div>
-      <div class="t-card"><h3>Tue</h3><p>found a new song. looped for hours.</p></div>
-      <div class="t-card"><h3>Wed</h3><p>rain on the window, neon outside.</p></div>
-      <div class="t-card"><h3>Thu</h3><p>subway blur becomes a memory trail.</p></div>
-      <div class="t-card"><h3>Fri</h3><p>tiny wins pile up quietly.</p></div>
-    </section>
-
-    <!-- 底部整屏大图：用 <img> 防裁切 -->
-    <section class="hero-bottom" aria-label="bottom poster">
-      <img src="images/my_cat/IMG_3416.PNG" alt="Neon street mirror after rain" class="bottom-img">
-      <figcaption class="bottom-cap">neon rain — the street becomes a mirror</figcaption>
-    </section>
+    <footer>
+       <a href="interests.html">enter NewJeans</a> · <a href="cat.html">enter My Cat</a>
+    </footer>
   </div>
-
-  <!-- 随机化贴纸动画节奏（可删） -->
-  <script>
-    document.querySelectorAll('.floaty').forEach((el)=>{
-      const delay=(Math.random()*2).toFixed(2)+'s';
-      const dur=(5.5+Math.random()*3).toFixed(2)+'s';
-      el.style.animationDelay=delay; el.style.animationDuration=dur; el.style.setProperty('--r',(Math.random()*6-3).toFixed(2)+'deg');
-    });
-  </script>
 </body>
 </html>
